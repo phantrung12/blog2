@@ -11,7 +11,7 @@ const socialLinks = [
 export function Footer() {
   return (
     <footer className="border-t border-border/40 py-8">
-      <Container>
+      <Container className="max-w-6xl">
         <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
           {/* Copyright */}
           <p className="text-sm text-muted-foreground">

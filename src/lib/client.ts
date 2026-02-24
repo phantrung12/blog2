@@ -16,6 +16,11 @@ apiClient.interceptors.request.use(
       if (token && config.headers) {
         config.headers.Authorization = `Bearer ${token}`;
       }
+    } else {
+      const token = JSCookie.get("accessToken");
+      if (token && config.headers) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
     return config;
   },
@@ -61,6 +66,8 @@ apiClient.interceptors.response.use(
           localStorage.removeItem("accessToken");
           localStorage.removeItem("user");
           window.location.href = "/login";
+        } else {
+          JSCookie.remove("accessToken");
         }
         return Promise.reject(refreshError);
       }

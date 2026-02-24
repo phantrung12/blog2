@@ -2,11 +2,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { type Post, formatDate } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
+import { IPost } from "@/types/post.type";
+import { formatDate } from "@/lib/mock-data";
 
 interface PostCardProps {
-  post: Post;
+  post: IPost;
   className?: string;
 }
 
@@ -20,10 +21,10 @@ export function PostCard({ post, className }: PostCardProps) {
       )}
     >
       {/* Background Image */}
-      {post.coverImage ? (
+      {post.thumbnail ? (
         <Image
-          src={post.coverImage}
-          alt={post.title}
+          src={post.thumbnail}
+          alt={post.title || ""}
           fill
           className="object-cover transition-transform duration-500 group-hover:scale-110"
         />
@@ -39,11 +40,11 @@ export function PostCard({ post, className }: PostCardProps) {
         {/* Meta */}
         <div className="mb-2 flex items-center gap-3 text-xs text-white/70">
           <time dateTime={post.publishedAt}>
-            {formatDate(post.publishedAt)}
+            {formatDate(post.publishedAt || "")}
           </time>
           <span className="flex items-center gap-1">
             <Clock className="h-3 w-3" />
-            {post.readingTime} min
+            {post.readingTime || 5} min
           </span>
         </div>
 
@@ -59,21 +60,21 @@ export function PostCard({ post, className }: PostCardProps) {
 
         {/* Tags */}
         <div className="flex flex-wrap gap-1.5">
-          {post.tags.slice(0, 2).map((tag) => (
+          {post.tags?.slice(0, 2).map((tag) => (
             <Badge
-              key={tag}
+              key={tag?.id}
               variant="secondary"
               className="bg-white/20 text-xs text-white hover:bg-white/30"
             >
-              {tag}
+              {tag?.name}
             </Badge>
           ))}
-          {post.tags.length > 2 && (
+          {post?.tags && post?.tags?.length > 2 && (
             <Badge
               variant="secondary"
               className="bg-white/20 text-xs text-white hover:bg-white/30"
             >
-              +{post.tags.length - 2}
+              +{post?.tags?.length - 2}
             </Badge>
           )}
         </div>

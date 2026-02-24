@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { posts, author, getPostBySlug, formatDate } from "@/lib/mock-data";
+import { postService } from "@/services/post.service";
 
 interface PostPageProps {
   params: Promise<{
@@ -16,22 +17,18 @@ interface PostPageProps {
   }>;
 }
 
-export async function generateStaticParams() {
-  return posts.map((post) => ({
-    slug: post.slug,
-  }));
-}
+export const dynamic = "force-dynamic";
 
 export default async function PostPage({ params }: PostPageProps) {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const { data: postDetail } = await postService.getPostBySlug(slug);
 
-  if (!post) {
+  if (!postDetail) {
     notFound();
   }
 
   return (
-    <Container as="article" className="py-12">
+    <Container as="article" className="max-w-5xl py-12">
       {/* Back Link */}
       <Link
         href="/"
@@ -42,11 +39,11 @@ export default async function PostPage({ params }: PostPageProps) {
       </Link>
 
       {/* Cover Image */}
-      {post.coverImage && (
+      {postDetail?.data?.thumbnail && (
         <div className="relative mb-8 aspect-video w-full overflow-hidden rounded-xl">
           <Image
-            src={post.coverImage}
-            alt={post.title}
+            src={postDetail?.data?.thumbnail}
+            alt={postDetail?.data?.title || ""}
             fill
             className="object-cover"
             priority
@@ -58,16 +55,16 @@ export default async function PostPage({ params }: PostPageProps) {
       <header className="mb-8 space-y-4">
         {/* Meta */}
         <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-          <time dateTime={post.publishedAt}>
-            {formatDate(post.publishedAt)}
+          <time dateTime={postDetail?.data?.publishedAt}>
+            {formatDate(postDetail?.data?.publishedAt || "")}
           </time>
           <span>•</span>
           <span className="flex items-center gap-1">
             <Clock className="h-3.5 w-3.5" />
-            {post.readingTime} min read
+            {postDetail?.data?.readingTime} min read
           </span>
           <Button variant="ghost" size="sm" className="ml-auto gap-2" asChild>
-            <Link href={`/posts/${post.slug}/edit`}>
+            <Link href={`/posts/${postDetail?.data?.slug}/edit`}>
               <Edit className="h-3.5 w-3.5" />
               Edit
             </Link>
@@ -76,14 +73,14 @@ export default async function PostPage({ params }: PostPageProps) {
 
         {/* Title */}
         <h1 className="font-serif text-4xl font-bold tracking-tight sm:text-5xl">
-          {post.title}
+          {postDetail?.data?.title}
         </h1>
 
         {/* Tags */}
         <div className="flex flex-wrap gap-2">
-          {post.tags.map((tag) => (
-            <Badge key={tag} variant="secondary">
-              {tag}
+          {postDetail?.data?.tags?.map((tag) => (
+            <Badge key={tag?.id} variant="secondary">
+              {tag?.name}
             </Badge>
           ))}
         </div>
@@ -92,7 +89,7 @@ export default async function PostPage({ params }: PostPageProps) {
       <Separator className="mb-8" />
 
       {/* Content */}
-      <PostContent content={post.content} />
+      <PostContent content={postDetail?.data?.content || ""} />
 
       <Separator className="my-12" />
 

@@ -6,3 +6,9 @@ export interface ITag {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface ITagCreate {
+  name?: string;
+  slug?: string;
+  description?: string;
+}

@@ -6,3 +6,9 @@ export interface ICategory {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface ICategoryCreate {
+  name?: string;
+  slug?: string;
+  description?: string;
+}
