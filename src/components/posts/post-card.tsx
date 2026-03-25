@@ -21,9 +21,9 @@ export function PostCard({ post, className }: PostCardProps) {
       )}
     >
       {/* Background Image */}
-      {post.thumbnail ? (
+      {post.cover_image_url ? (
         <Image
-          src={post.thumbnail}
+          src={post.cover_image_url}
           alt={post.title || ""}
           fill
           className="object-cover transition-transform duration-500 group-hover:scale-110"
@@ -39,12 +39,12 @@ export function PostCard({ post, className }: PostCardProps) {
       <div className="absolute inset-0 flex flex-col justify-end p-5">
         {/* Meta */}
         <div className="mb-2 flex items-center gap-3 text-xs text-white/70">
-          <time dateTime={post.publishedAt}>
-            {formatDate(post.publishedAt || "")}
+          <time dateTime={post.published_at}>
+            {formatDate(post.published_at || "")}
           </time>
           <span className="flex items-center gap-1">
             <Clock className="h-3 w-3" />
-            {post.readingTime || 5} min
+            {post.reading_time_minutes || 5} min
           </span>
         </div>
 
@@ -54,9 +54,9 @@ export function PostCard({ post, className }: PostCardProps) {
         </h3>
 
         {/* Excerpt - visible on hover */}
-        <p className="mb-3 line-clamp-2 text-sm text-white/70 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-          {post.excerpt}
-        </p>
+        {/* <p className="mb-3 line-clamp-2 text-sm text-white/70 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+          {post.}
+        </p> */}
 
         {/* Tags */}
         <div className="flex flex-wrap gap-1.5">

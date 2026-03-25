@@ -26,7 +26,7 @@ export function LoginForm() {
       setIsLoading(true);
       setError(null);
       const response = await authService.login(data);
-      if (response?.data?.success) {
+      if (response?.data?.statusCode === 200) {
         const { accessToken, user } = response.data.data;
         login(accessToken, user);
 

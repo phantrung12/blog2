@@ -13,10 +13,11 @@ export default async function FeedPage(props: {
   const { data: posts } = await postService.getPosts({
     page: Number(searchParams.page) || 1,
     limit: Number(searchParams.limit) || 10,
-    categoryId: searchParams.categoryId?.toString(),
-    tagId: searchParams.tagId?.toString(),
-    search: searchParams.search?.toString(),
-    status: searchParams.status?.toString() as PostStatus,
+    categoryId: searchParams?.categoryId?.toString(),
+    tagId: searchParams?.tagId?.toString(),
+    search: searchParams?.search?.toString(),
+    status: (searchParams?.status?.toString() ||
+      PostStatus.PUBLISHED) as PostStatus,
   });
 
   const { data: tags } = await tagService.getTags();

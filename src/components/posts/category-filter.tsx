@@ -54,7 +54,7 @@ export function CategoryFilter({
           className={cn(
             "rounded-full px-4 py-2 text-sm font-medium transition-all duration-200",
             "cursor-pointer",
-            selectedCategory === category.id
+            selectedCategory === category.id.toString()
               ? "bg-emerald-600 text-white"
               : "bg-muted text-muted-foreground hover:bg-emerald-100 hover:text-emerald-700 dark:hover:bg-emerald-900/30 dark:hover:text-emerald-400",
           )}
