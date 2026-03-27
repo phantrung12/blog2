@@ -9,6 +9,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { type Post } from "@/lib/mock-data";
+import { SimpleEditor } from "../tiptap-templates/simple/simple-editor";
+import { Select as AntSelect } from "antd";
 
 interface PostFormProps {
   post?: Post;
@@ -164,7 +166,7 @@ export function PostForm({ post, mode }: PostFormProps) {
         {/* Content */}
         <div className="space-y-2">
           <Label htmlFor="content">Content *</Label>
-          <Textarea
+          {/* <Textarea
             id="content"
             placeholder="Write your post content here... (Markdown supported)"
             value={content}
@@ -172,18 +174,20 @@ export function PostForm({ post, mode }: PostFormProps) {
             rows={20}
             required
             className="font-mono text-sm"
-          />
+          /> */}
+          <SimpleEditor />
         </div>
 
         {/* Tags */}
         <div className="space-y-2">
           <Label htmlFor="tags">Tags</Label>
-          <Input
+          {/* <Input
             id="tags"
             placeholder="React, TypeScript, Web Development"
             value={tags}
             onChange={(e) => setTags(e.target.value)}
-          />
+          /> */}
+          <AntSelect mode="tags" style={{ width: "100%" }} placeholder="Tags" />
           <p className="text-xs text-muted-foreground">
             Separate tags with commas
           </p>
