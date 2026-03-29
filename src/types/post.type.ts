@@ -29,6 +29,7 @@ export interface IPostCreate {
   title?: string;
   slug?: string;
   content?: string;
+  cover_image_url?: string;
   excerpt?: string;
   status?: PostStatus;
   categoryId?: string;
