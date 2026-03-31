@@ -4,24 +4,24 @@ import { ITag } from "./tag.type";
 import { IUser } from "./user.type";
 
 export interface IPost {
-  id: string;
+  id: number;
   title: string;
   content: string;
   slug: string;
   status: PostStatus;
-  cover_image_url: string;
-  reading_time_minutes: number;
-  meta_title: string;
-  meta_description: string;
-  meta_keywords: string;
-  author_id: string;
-  category_id: string;
+  metaTitle: string;
+  metaDescription: string;
+  metaKeywords: string;
+  categoryId: string;
+  authorId: string;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+  coverImageUrl: string;
+  readingTimeMinutes: number;
   author: IUser;
   categories: ICategory;
   tags: ITag[];
-  created_at: string;
-  updated_at: string;
-  published_at: string;
 }
 
 export interface IPostCreate {
@@ -29,8 +29,7 @@ export interface IPostCreate {
   title?: string;
   slug?: string;
   content?: string;
-  cover_image_url?: string;
-  excerpt?: string;
+  coverImageUrl?: string;
   status?: PostStatus;
   categoryId?: string;
   tagIds?: string[];

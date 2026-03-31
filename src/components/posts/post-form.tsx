@@ -17,6 +17,8 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useTags } from "@/hooks/use-tags";
 import { useCategories } from "@/hooks/use-categories";
+import slugify from "slugify";
+import { usePosts } from "@/hooks/use-posts";
 
 interface PostFormProps {
   post?: IPost;
@@ -26,26 +28,21 @@ interface PostFormProps {
 const schema = yup.object({
   title: yup.string().required("Title is required"),
   slug: yup.string().required("Slug is required"),
-  excerpt: yup.string().required("Excerpt is required"),
-  cover_image_url: yup.string().required("Cover image is required"),
+  // excerpt: yup.string().required("Excerpt is required"),
+  coverImageUrl: yup.string().nullable(),
   content: yup.string().required("Content is required"),
-  tagIds: yup.array().required("Tags are required"),
+  tagIds: yup.array().nullable(),
+  categoryId: yup.number().nullable(),
   // isPublished: yup.boolean().required("Published is required"),
 });
 
 export function PostForm({ post, mode }: PostFormProps) {
   const router = useRouter();
-  const { control, handleSubmit, setValue } = useForm<IPostCreate>({
+  const { control, handleSubmit, setValue } = useForm<any>({
     resolver: yupResolver(schema),
-    defaultValues: {
-      title: post?.title ?? "",
-      slug: post?.slug ?? "",
-      // excerpt: post?.excerpt ?? "",
-      cover_image_url: post?.cover_image_url ?? "",
-      content: post?.content ?? "",
-      tagIds: post?.tags.map((tag) => tag.id) ?? [],
-    },
   });
+
+  const { createPost } = usePosts();
 
   //hook query para obtener tags
   const { data: tags } = useTags({ enabledList: true });
@@ -54,11 +51,7 @@ export function PostForm({ post, mode }: PostFormProps) {
   // Auto-generate slug from title
   const handleTitleChange = (value: string) => {
     if (mode === "create") {
-      const generatedSlug = value
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/(^-|-$)/g, "");
-      setValue("slug", generatedSlug);
+      setValue("slug", slugify(value));
     }
   };
 
@@ -66,7 +59,7 @@ export function PostForm({ post, mode }: PostFormProps) {
     // In a real app, this would save to a database
     console.log(data);
     // Navigate back to the feed
-    router.push("/");
+    // router.push("/");
   };
 
   return (
@@ -84,26 +77,11 @@ export function PostForm({ post, mode }: PostFormProps) {
         </Button>
 
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            {/* <Switch
-              id="published"
-              checked={isPublished}
-              onCheckedChange={setIsPublished}
-            /> */}
-            <Label
-              htmlFor="published"
-              className="text-sm text-muted-foreground"
-            >
-              Publish
-            </Label>
-          </div>
-
-          <Button type="button" variant="outline" className="gap-2">
-            <Eye className="h-4 w-4" />
-            Preview
-          </Button>
-
-          <Button type="submit" className="gap-2">
+          <Button
+            type="submit"
+            className="gap-2"
+            onClick={() => handleSubmit(onSubmit)}
+          >
             <Save className="h-4 w-4" />
             {mode === "create" ? "Publish" : "Update"}
           </Button>
@@ -156,7 +134,7 @@ export function PostForm({ post, mode }: PostFormProps) {
 
         {/* Cover Image */}
         <Controller
-          name="cover_image_url"
+          name="coverImageUrl"
           control={control}
           render={({ field }) => (
             <div className="space-y-2">

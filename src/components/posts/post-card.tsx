@@ -21,11 +21,12 @@ export function PostCard({ post, className }: PostCardProps) {
       )}
     >
       {/* Background Image */}
-      {post.cover_image_url ? (
+      {post.coverImageUrl ? (
         <Image
-          src={post.cover_image_url}
+          src={post.coverImageUrl}
           alt={post.title || ""}
           fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className="object-cover transition-transform duration-500 group-hover:scale-110"
         />
       ) : (
@@ -39,12 +40,12 @@ export function PostCard({ post, className }: PostCardProps) {
       <div className="absolute inset-0 flex flex-col justify-end p-5">
         {/* Meta */}
         <div className="mb-2 flex items-center gap-3 text-xs text-white/70">
-          <time dateTime={post.published_at}>
-            {formatDate(post.published_at || "")}
+          <time dateTime={post.publishedAt}>
+            {formatDate(post.publishedAt || "")}
           </time>
           <span className="flex items-center gap-1">
             <Clock className="h-3 w-3" />
-            {post.reading_time_minutes || 5} min
+            {post.readingTimeMinutes || 5} min
           </span>
         </div>
 
