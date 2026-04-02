@@ -55,9 +55,11 @@ export function PostForm({ post, mode }: PostFormProps) {
     }
   };
 
-  const onSubmit = (data: IPostCreate) => {
+  const onSubmit = async (data: IPostCreate) => {
     // In a real app, this would save to a database
     console.log(data);
+    const res = await createPost.mutateAsync(data);
+    console.log(res);
     // Navigate back to the feed
     // router.push("/");
   };

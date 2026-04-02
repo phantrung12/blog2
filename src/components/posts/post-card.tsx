@@ -3,7 +3,7 @@ import Image from "next/image";
 import { Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { IPost } from "@/types/post.type";
+import { IPost, PostStatus } from "@/types/post.type";
 import { formatDate } from "@/lib/mock-data";
 
 interface PostCardProps {
@@ -27,7 +27,7 @@ export function PostCard({ post, className }: PostCardProps) {
           alt={post.title || ""}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className="object-cover transition-transform duration-500 group-hover:scale-110"
+          className="object-cover transition-all duration-500 group-hover:scale-110"
         />
       ) : (
         <div className="h-full w-full bg-linear-to-br from-zinc-700 to-zinc-900" />
@@ -35,6 +35,24 @@ export function PostCard({ post, className }: PostCardProps) {
 
       {/* Gradient Overlay */}
       <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/40 to-transparent transition-opacity duration-300 group-hover:from-black/95" />
+
+      {/* Status Badge */}
+      {post.status && (
+        <div className="absolute top-4 right-4 z-20">
+          <Badge
+            className={cn(
+              "text-[10px] font-semibold uppercase tracking-wider shadow-sm backdrop-blur-md",
+              post.status === PostStatus.PUBLISHED
+                ? "bg-emerald-500/80 text-white hover:bg-emerald-600/80"
+                : post.status === PostStatus.DRAFT
+                  ? "bg-amber-500/80 text-white hover:bg-amber-600/80"
+                  : "bg-zinc-500/80 text-white hover:bg-zinc-600/80",
+            )}
+          >
+            {post.status}
+          </Badge>
+        </div>
+      )}
 
       {/* Content */}
       <div className="absolute inset-0 flex flex-col justify-end p-5">

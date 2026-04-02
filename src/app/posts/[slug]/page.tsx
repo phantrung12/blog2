@@ -39,10 +39,10 @@ export default async function PostPage({ params }: PostPageProps) {
       </Link>
 
       {/* Cover Image */}
-      {postDetail?.data?.thumbnail && (
+      {postDetail?.data?.coverImageUrl && (
         <div className="relative mb-8 aspect-video w-full overflow-hidden rounded-xl">
           <Image
-            src={postDetail?.data?.thumbnail}
+            src={postDetail?.data?.coverImageUrl}
             alt={postDetail?.data?.title || ""}
             fill
             className="object-cover"
@@ -61,7 +61,7 @@ export default async function PostPage({ params }: PostPageProps) {
           <span>•</span>
           <span className="flex items-center gap-1">
             <Clock className="h-3.5 w-3.5" />
-            {postDetail?.data?.readingTime} min read
+            {postDetail?.data?.readingTimeMinutes} min read
           </span>
           <Button variant="ghost" size="sm" className="ml-auto gap-2" asChild>
             <Link href={`/posts/${postDetail?.data?.slug}/edit`}>

@@ -45,6 +45,7 @@ export interface PostFilterParams extends IPaginationParams {
   categorySlug?: string;
   tagId?: string;
   tagSlug?: string;
+  authorId?: string;
 }
 
 export enum PostStatus {
