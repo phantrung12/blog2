@@ -4,7 +4,8 @@ import { Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { IPost, PostStatus } from "@/types/post.type";
-import { formatDate } from "@/lib/mock-data";
+import { convertDateDMY } from "@/utils/date-utils";
+// import { formatDate } from "@/lib/mock-data";
 
 interface PostCardProps {
   post: IPost;
@@ -59,7 +60,7 @@ export function PostCard({ post, className }: PostCardProps) {
         {/* Meta */}
         <div className="mb-2 flex items-center gap-3 text-xs text-white/70">
           <time dateTime={post.publishedAt}>
-            {formatDate(post.publishedAt || "")}
+            {convertDateDMY(post.publishedAt || "")}
           </time>
           <span className="flex items-center gap-1">
             <Clock className="h-3 w-3" />

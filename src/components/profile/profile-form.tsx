@@ -10,6 +10,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { type Author } from "@/lib/mock-data";
+import JSCookie from "js-cookie";
+import { useUserById } from "@/hooks/use-users";
 
 interface ProfileFormProps {
   author: Author;
@@ -24,6 +26,10 @@ export function ProfileForm({ author }: ProfileFormProps) {
   const [twitter, setTwitter] = React.useState(author.social?.twitter ?? "");
   const [github, setGithub] = React.useState(author.social?.github ?? "");
   const [linkedin, setLinkedin] = React.useState(author.social?.linkedin ?? "");
+
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const { data: userDetail } = useUserById(user.id);
+  console.log(userDetail);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

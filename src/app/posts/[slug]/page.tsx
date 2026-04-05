@@ -8,8 +8,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-import { posts, author, getPostBySlug, formatDate } from "@/lib/mock-data";
+import { author } from "@/lib/mock-data";
 import { postService } from "@/services/post.service";
+import { convertDateDMY } from "@/utils/date-utils";
 
 interface PostPageProps {
   params: Promise<{
@@ -56,7 +57,7 @@ export default async function PostPage({ params }: PostPageProps) {
         {/* Meta */}
         <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
           <time dateTime={postDetail?.data?.publishedAt}>
-            {formatDate(postDetail?.data?.publishedAt || "")}
+            {convertDateDMY(postDetail?.data?.publishedAt || "")}
           </time>
           <span>•</span>
           <span className="flex items-center gap-1">
@@ -89,7 +90,11 @@ export default async function PostPage({ params }: PostPageProps) {
       <Separator className="mb-8" />
 
       {/* Content */}
-      <PostContent content={postDetail?.data?.content || ""} />
+      {/* <PostContent content={postDetail?.data?.content || ""} /> */}
+      <div
+        className="prose prose-lg prose-invert max-w-none"
+        dangerouslySetInnerHTML={{ __html: postDetail?.data?.content || "" }}
+      ></div>
 
       <Separator className="my-12" />
 
@@ -97,14 +102,19 @@ export default async function PostPage({ params }: PostPageProps) {
       <footer className="rounded-xl border border-border/40 bg-muted/30 p-6">
         <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:text-left">
           <Avatar className="h-16 w-16 border-2 border-border">
-            <AvatarImage src={author.avatar} alt={author.name} />
+            <AvatarImage
+              src={author.avatar}
+              alt={postDetail?.data?.author?.name}
+            />
             <AvatarFallback className="text-xl">
-              {author.name.charAt(0)}
+              {postDetail?.data?.author?.name.charAt(0)}
             </AvatarFallback>
           </Avatar>
           <div className="space-y-1">
             <p className="text-sm text-muted-foreground">Written by</p>
-            <h3 className="text-lg font-semibold">{author.name}</h3>
+            <h3 className="text-lg font-semibold">
+              {postDetail?.data?.author?.name}
+            </h3>
             <p className="max-w-md text-sm text-muted-foreground">
               {author.bio}
             </p>

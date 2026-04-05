@@ -60,10 +60,7 @@ export function Header() {
                       className="h-9 w-9"
                       asChild
                     >
-                      <Link
-                        href="/profile/edit"
-                        title={user?.name || "Profile"}
-                      >
+                      <Link href="/profile" title={user?.name || "Profile"}>
                         <User className="h-4 w-4" />
                         <span className="sr-only">Profile</span>
                       </Link>
