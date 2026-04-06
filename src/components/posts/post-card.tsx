@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Clock } from "lucide-react";
+import { Clock, Dot } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { IPost, PostStatus } from "@/types/post.type";
@@ -66,6 +66,8 @@ export function PostCard({ post, className }: PostCardProps) {
             <Clock className="h-3 w-3" />
             {post.readingTimeMinutes || 5} min
           </span>
+          <Dot className="size-4" />
+          <p className="font-semibold">{post.author?.name}</p>
         </div>
 
         {/* Title */}

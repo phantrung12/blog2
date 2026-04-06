@@ -1,6 +1,7 @@
 import { Container } from "@/components/layout/container";
 import { PostCard } from "@/components/posts/post-card";
 import { ProfileInfo } from "@/components/profile/profile-info";
+import { ProfilePostPagination } from "@/components/profile/profile-post-pagination";
 import { ProfilePostTab } from "@/components/profile/profile-post-tab";
 import { postService } from "@/services/post.service";
 import { PostStatus } from "@/types/post.type";
@@ -21,6 +22,7 @@ export default async function ProfilePage(props: {
       PostStatus.PUBLISHED) as PostStatus,
     ...(user?.id && { authorId: user.id }),
   });
+  console.log("posts", posts);
   return (
     <div className="min-h-screen bg-zinc-50 pb-20 pt-10 dark:bg-zinc-950">
       <Container className="max-w-6xl space-y-10">
@@ -32,6 +34,11 @@ export default async function ProfilePage(props: {
               <PostCard key={post.id} post={post} />
             ))}
           </div>
+          <ProfilePostPagination
+            currentPage={Number(searchParams.page) || 1}
+            totalPages={posts?.data?.pagination?.totalPages || 1}
+            totalItems={posts?.data?.pagination?.totalItems || 1}
+          />
         </div>
       </Container>
     </div>

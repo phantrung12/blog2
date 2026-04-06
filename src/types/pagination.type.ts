@@ -1,6 +1,6 @@
 export interface IPagination<T> {
   items: T[];
-  meta: {
+  pagination: {
     totalItems: number;
     itemCount: number;
     itemsPerPage: number;
