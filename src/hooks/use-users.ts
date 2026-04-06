@@ -1,13 +1,28 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { userService } from "@/services/user.service";
-import { IFilterUser } from "@/types/user.type";
+import { IFilterUser, IUserCreate, IUserUpdate } from "@/types/user.type";
 
-export function useUsers({ filter, enabledList }: { filter: IFilterUser, enabledList: boolean }) {
-  return useQuery({
+export function useUsers(filter?: IFilterUser, enabledList?: boolean) {
+  const getUserList = useQuery({
     queryKey: ["users", filter],
-    queryFn: () => userService.getUsers(filter),
+    queryFn: () => userService.getUsers(filter || {}),
     enabled: enabledList,
   });
+
+  const createUser = useMutation({
+    mutationFn: (data: IUserCreate) => userService.createUser(data),
+  });
+
+  const updateUser = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: IUserUpdate }) =>
+      userService.updateUser(id, data),
+  });
+
+  return {
+    getUserList,
+    updateUser,
+    createUser,
+  };
 }
 
 export function useUserById(id: string) {

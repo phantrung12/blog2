@@ -20,6 +20,8 @@ interface PostPageProps {
 
 export const dynamic = "force-dynamic";
 
+export const revalidate = 60;
+
 export default async function PostPage({ params }: PostPageProps) {
   const { slug } = await params;
   const { data: postDetail } = await postService.getPostBySlug(slug);

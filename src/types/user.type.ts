@@ -5,10 +5,10 @@ export interface IUser {
   email: string;
   name: string;
   password: string;
-  avatarUrl: string;
-  bio: string;
-  websiteUrl: string;
-  jobTitle: string;
+  avatarUrl?: string;
+  bio?: string;
+  websiteUrl?: string;
+  jobTitle?: string;
   createdAt: string;
   updatedAt: string;
 }

@@ -6,6 +6,26 @@ import { postService } from "@/services/post.service";
 import { tagService } from "@/services/tag.service";
 import { PostStatus } from "@/types/post.type";
 
+export const revalidate = 60; // regenerate mỗi 60 giây
+
+export async function generateStaticParams(props: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const searchParams = await props.searchParams;
+  const { data: posts } = await postService.getPosts({
+    page: Number(searchParams.page) || 1,
+    limit: Number(searchParams.limit) || 10,
+    categoryId: searchParams?.categoryId?.toString(),
+    tagId: searchParams?.tagId?.toString(),
+    search: searchParams?.search?.toString(),
+    status: (searchParams?.status?.toString() ||
+      PostStatus.PUBLISHED) as PostStatus,
+  });
+  return posts?.data?.items.map((post) => ({
+    slug: post.slug.toString(),
+  }));
+}
+
 export default async function FeedPage(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
