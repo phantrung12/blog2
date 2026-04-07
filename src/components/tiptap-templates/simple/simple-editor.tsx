@@ -13,6 +13,10 @@ import { Highlight } from "@tiptap/extension-highlight";
 import { Subscript } from "@tiptap/extension-subscript";
 import { Superscript } from "@tiptap/extension-superscript";
 import { Selection } from "@tiptap/extensions";
+import { TextStyle } from "@tiptap/extension-text-style";
+
+// --- Tiptap Extension ---
+import { FontSize } from "@/components/tiptap-extension/font-size-extension";
 
 // --- UI Primitives ---
 import { Button } from "@/components/tiptap-ui-primitive/button";
@@ -72,7 +76,7 @@ import { handleImageUpload, MAX_FILE_SIZE } from "@/lib/tiptap-utils";
 
 // --- Styles ---
 import "@/components/tiptap-templates/simple/simple-editor.scss";
-
+import { FontSizePopover } from "@/components/tiptap-ui/fontsize-popover/fontsize-popover";
 
 const MainToolbarContent = ({
   onHighlighterClick,
@@ -95,6 +99,7 @@ const MainToolbarContent = ({
       <ToolbarSeparator />
 
       <ToolbarGroup>
+        <FontSizePopover />
         <HeadingDropdownMenu modal={false} levels={[1, 2, 3, 4]} />
         <ListDropdownMenu
           modal={false}
@@ -117,7 +122,8 @@ const MainToolbarContent = ({
         ) : (
           <ColorHighlightPopoverButton onClick={onHighlighterClick} />
         )}
-        {!isMobile ? <LinkPopover /> : <LinkButton onClick={onLinkClick} />}
+        {/* {!isMobile ? <LinkPopover /> : <LinkButton onClick={onLinkClick} />} */}
+        <LinkPopover />
       </ToolbarGroup>
 
       <ToolbarSeparator />
@@ -224,6 +230,8 @@ export function SimpleEditor({ value, onChange }: SimpleEditorProps) {
       Superscript,
       Subscript,
       Selection,
+      TextStyle,
+      FontSize,
       ImageUploadNode.configure({
         accept: "image/*",
         maxSize: MAX_FILE_SIZE,
@@ -237,6 +245,15 @@ export function SimpleEditor({ value, onChange }: SimpleEditorProps) {
       onChange?.(editor.getHTML());
     },
   });
+
+  useEffect(() => {
+    if (editor && value !== undefined && !editor.isDestroyed) {
+      const currentContent = editor.getHTML();
+      if (currentContent !== value) {
+        editor.commands.setContent(value, { emitUpdate: false });
+      }
+    }
+  }, [editor, value]);
 
   const rect = useCursorVisibility({
     editor,

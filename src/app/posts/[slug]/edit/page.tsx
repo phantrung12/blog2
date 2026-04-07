@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { Container } from "@/components/layout/container";
 import { PostForm } from "@/components/posts/post-form";
 import { posts, getPostBySlug } from "@/lib/mock-data";
+import { postService } from "@/services/post.service";
 
 interface EditPostPageProps {
   params: Promise<{
@@ -17,7 +18,7 @@ export async function generateStaticParams() {
 
 export default async function EditPostPage({ params }: EditPostPageProps) {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const post = await postService.getPostBySlug(slug);
 
   if (!post) {
     notFound();
@@ -30,11 +31,11 @@ export default async function EditPostPage({ params }: EditPostPageProps) {
           Edit Post
         </h1>
         <p className="mt-2 text-muted-foreground">
-          Make changes to &ldquo;{post.title}&rdquo;
+          Make changes to &ldquo;{post.data?.data?.title}&rdquo;
         </p>
       </div>
 
-      <PostForm mode="edit" post={post} />
+      <PostForm mode="edit" post={post?.data?.data} />
     </Container>
   );
 }

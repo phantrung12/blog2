@@ -1,24 +1,27 @@
 "use client";
 
-import * as React from "react";
-import { useRouter } from "next/navigation";
-import { Save, ArrowLeft, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
-import { type Post } from "@/lib/mock-data";
-import { SimpleEditor } from "../tiptap-templates/simple/simple-editor";
-import { Select as AntSelect } from "antd";
-import { Controller, useForm } from "react-hook-form";
-import { IPost, IPostCreate } from "@/types/post.type";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { useTags } from "@/hooks/use-tags";
 import { useCategories } from "@/hooks/use-categories";
-import slugify from "slugify";
 import { usePosts } from "@/hooks/use-posts";
+import { useTags } from "@/hooks/use-tags";
+import { IPost } from "@/types/post.type";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { Select as AntSelect } from "antd";
+import { ArrowLeft, Save } from "lucide-react";
+import { useRouter } from "next/navigation";
+import * as React from "react";
+import { Controller, useForm } from "react-hook-form";
+import slugify from "slugify";
+import * as yup from "yup";
+import { SimpleEditor } from "../tiptap-templates/simple/simple-editor";
+import dynamic from "next/dynamic";
+
+const CKEditorCustom = dynamic(() => import("../custom-editor/custom-editor"), {
+  ssr: false,
+  loading: () => <p>Loading...</p>,
+});
 
 interface PostFormProps {
   post?: IPost;
@@ -38,15 +41,28 @@ const schema = yup.object({
 
 export function PostForm({ post, mode }: PostFormProps) {
   const router = useRouter();
-  const { control, handleSubmit, setValue } = useForm<any>({
+  const { control, handleSubmit, setValue, reset } = useForm<any>({
     resolver: yupResolver(schema),
   });
 
-  const { createPost } = usePosts();
+  const { createPost, updatePost } = usePosts();
 
   //hook query para obtener tags
   const { data: tags } = useTags({ enabledList: true });
   const { data: categories } = useCategories({ enabledList: true });
+
+  React.useEffect(() => {
+    if (mode === "edit" && post) {
+      reset({
+        title: post.title,
+        slug: post.slug,
+        coverImageUrl: post.coverImageUrl,
+        content: post.content,
+        tagIds: post.tags?.map((tag) => tag.id),
+        categoryId: post.categoryId,
+      });
+    }
+  }, [mode, post]);
 
   // Auto-generate slug from title
   const handleTitleChange = (value: string) => {
@@ -55,13 +71,16 @@ export function PostForm({ post, mode }: PostFormProps) {
     }
   };
 
-  const onSubmit = async (data: IPostCreate) => {
+  const onSubmit = async (data: any) => {
     // In a real app, this would save to a database
-    console.log(data);
-    const res = await createPost.mutateAsync(data);
-    console.log(res);
-    // Navigate back to the feed
-    // router.push("/");
+    console.log("submit", data);
+    const res = post
+      ? await updatePost.mutateAsync({
+          id: post.id,
+          ...data,
+        })
+      : await createPost.mutateAsync(data);
+    // console.log(res);
   };
 
   return (
@@ -185,10 +204,15 @@ export function PostForm({ post, mode }: PostFormProps) {
             name="content"
             control={control}
             render={({ field }) => (
-              <SimpleEditor value={field.value} onChange={field.onChange} />
+              // <SimpleEditor value={field.value} onChange={field.onChange} />
+              <CKEditorCustom value={field.value} onChange={field.onChange} />
             )}
           />
         </div>
+
+        {/* <div className="space-y-2">
+          <CKEditorCustom />
+        </div> */}
 
         {/* Categories */}
         <Controller

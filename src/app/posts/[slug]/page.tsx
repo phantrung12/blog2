@@ -11,6 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { author } from "@/lib/mock-data";
 import { postService } from "@/services/post.service";
 import { convertDateDMY } from "@/utils/date-utils";
+import "@/styles/tiptap-content.scss";
 
 interface PostPageProps {
   params: Promise<{
@@ -94,7 +95,7 @@ export default async function PostPage({ params }: PostPageProps) {
       {/* Content */}
       {/* <PostContent content={postDetail?.data?.content || ""} /> */}
       <div
-        className="prose prose-lg prose-invert max-w-none"
+        className="tiptap-content max-w-none"
         dangerouslySetInnerHTML={{ __html: postDetail?.data?.content || "" }}
       ></div>
 

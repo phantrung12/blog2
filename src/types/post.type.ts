@@ -38,6 +38,10 @@ export interface IPostCreate {
   metaKeywords?: string;
 }
 
+export interface IPostUpdate extends IPostCreate {
+  id: string;
+}
+
 export interface PostFilterParams extends IPaginationParams {
   search?: string;
   status?: PostStatus;

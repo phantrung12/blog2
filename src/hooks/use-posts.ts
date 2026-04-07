@@ -1,11 +1,11 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { postService } from "@/services/post.service";
-import { IPostCreate, PostFilterParams } from "@/types/post.type";
+import { IPostCreate, IPostUpdate, PostFilterParams } from "@/types/post.type";
 
-export function usePosts(filter: PostFilterParams) {
+export function usePosts(filter?: PostFilterParams) {
   const searchPosts = useQuery({
     queryKey: ["posts", filter],
-    queryFn: () => postService.getPosts(filter),
+    queryFn: () => postService.getPosts(filter || {}),
     enabled: !!filter,
   });
 
@@ -16,9 +16,17 @@ export function usePosts(filter: PostFilterParams) {
     },
   });
 
+  const updatePost = useMutation({
+    mutationFn: async (data: IPostUpdate) => {
+      const res = await postService.updatePost(data.id, data);
+      return res.data;
+    },
+  });
+
   return {
     createPost,
     searchPosts,
+    updatePost,
   };
 }
 
