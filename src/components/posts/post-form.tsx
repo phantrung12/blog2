@@ -6,10 +6,17 @@ import { Label } from "@/components/ui/label";
 import { useCategories } from "@/hooks/use-categories";
 import { usePosts } from "@/hooks/use-posts";
 import { useTags } from "@/hooks/use-tags";
-import { IPost } from "@/types/post.type";
+import { IPost, PostStatus } from "@/types/post.type";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Select as AntSelect } from "antd";
-import { ArrowLeft, Save } from "lucide-react";
+import {
+  ArrowLeft,
+  Save,
+  Send,
+  Archive,
+  RotateCcw,
+  Loader2,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -41,11 +48,19 @@ const schema = yup.object({
 
 export function PostForm({ post, mode }: PostFormProps) {
   const router = useRouter();
-  const { control, handleSubmit, setValue, reset } = useForm<any>({
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm<any>({
     resolver: yupResolver(schema),
   });
+  console.log("errors", errors);
 
   const { createPost, updatePost } = usePosts();
+  const currentStatus = post?.status;
 
   //hook query para obtener tags
   const { data: tags } = useTags({ enabledList: true });
@@ -72,16 +87,23 @@ export function PostForm({ post, mode }: PostFormProps) {
   };
 
   const onSubmit = async (data: any) => {
-    // In a real app, this would save to a database
-    console.log("submit", data);
-    const res = post
-      ? await updatePost.mutateAsync({
-          id: post.id,
-          ...data,
-        })
-      : await createPost.mutateAsync(data);
-    // console.log(res);
+    const payload = {
+      ...data,
+    };
+
+    if (post) {
+      await updatePost.mutateAsync({ id: post.id, ...payload });
+    } else {
+      await createPost.mutateAsync(payload);
+    }
   };
+
+  const handleSave = (status: PostStatus) => {
+    setValue("status", status);
+    handleSubmit(onSubmit)();
+  };
+
+  const isMutating = createPost.isPending || updatePost.isPending;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
@@ -97,15 +119,60 @@ export function PostForm({ post, mode }: PostFormProps) {
           Back
         </Button>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
+          {/* Save / Update button */}
           <Button
-            type="submit"
+            // type="submit"
+            variant="outline"
             className="gap-2"
-            onClick={() => handleSubmit(onSubmit)}
+            disabled={isMutating}
+            onClick={() => handleSave(PostStatus.DRAFT)}
           >
-            <Save className="h-4 w-4" />
-            {mode === "create" ? "Publish" : "Update"}
+            {isMutating ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Save className="h-4 w-4" />
+            )}
+            {mode === "create" ? "Save Draft" : "Save"}
           </Button>
+
+          {/* Publish button: shown for draft / archived / new posts */}
+          {(mode === "create" ||
+            currentStatus === PostStatus.DRAFT ||
+            currentStatus === PostStatus.ARCHIVED) && (
+            <Button
+              type="button"
+              className="gap-2"
+              disabled={isMutating}
+              onClick={() => handleSave(PostStatus.PUBLISHED)}
+            >
+              {currentStatus === PostStatus.ARCHIVED ? (
+                <>
+                  <RotateCcw className="h-4 w-4" />
+                  Re-publish
+                </>
+              ) : (
+                <>
+                  <Send className="h-4 w-4" />
+                  Publish
+                </>
+              )}
+            </Button>
+          )}
+
+          {/* Archive button: shown for published posts */}
+          {currentStatus === PostStatus.PUBLISHED && (
+            <Button
+              type="button"
+              variant="destructive"
+              className="gap-2"
+              disabled={isMutating}
+              onClick={() => handleSave(PostStatus.ARCHIVED)}
+            >
+              <Archive className="h-4 w-4" />
+              Archive
+            </Button>
+          )}
         </div>
       </div>
 

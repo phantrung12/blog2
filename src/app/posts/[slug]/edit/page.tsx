@@ -25,7 +25,7 @@ export default async function EditPostPage({ params }: EditPostPageProps) {
   }
 
   return (
-    <Container as="main" className="py-12">
+    <Container as="main" className="py-12 max-w-5xl">
       <div className="mb-8">
         <h1 className="font-serif text-3xl font-semibold tracking-tight">
           Edit Post

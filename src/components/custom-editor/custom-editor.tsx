@@ -146,7 +146,7 @@ export default function CustomEditor({ value, onChange }: CustomEditorProps) {
           Link,
           LinkImage,
           List,
-          Markdown,
+          // Markdown,
           MediaEmbed,
           Mention,
           Paragraph,
@@ -314,6 +314,12 @@ export default function CustomEditor({ value, onChange }: CustomEditorProps) {
   }, [isLayoutReady]);
   return (
     <div className="main-container">
+      <style>{`
+        .ck-editor__editable_inline {
+          max-height: 500px;
+          overflow-y: auto !important;
+        }
+      `}</style>
       <div className="editor-container editor-container_classic-editor editor-container_include-style">
         <div className="editor-container__editor">
           {editorConfig && (
@@ -332,15 +338,5 @@ export default function CustomEditor({ value, onChange }: CustomEditorProps) {
         </div>
       </div>
     </div>
-    // <CKEditor
-    //   editor={ClassicEditor}
-    //   data="<p>Hello from CKEditor 5!</p>"
-    //   config={{
-    //     // copy y chang phần config từ App.jsx của CKEditor project
-    //     licenseKey: "GPL",
-    //     plugins: [Essentials, Bold, Italic],
-    //     toolbar: ["bold", "italic"],
-    //   }}
-    // />
   );
 }

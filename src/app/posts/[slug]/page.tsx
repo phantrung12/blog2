@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, Clock, Edit } from "lucide-react";
@@ -26,6 +27,13 @@ export const revalidate = 60;
 export default async function PostPage({ params }: PostPageProps) {
   const { slug } = await params;
   const { data: postDetail } = await postService.getPostBySlug(slug);
+
+  const cookieStore = await cookies();
+  const userCookie = cookieStore.get("user")?.value;
+  const currentUser = userCookie
+    ? JSON.parse(decodeURIComponent(userCookie))
+    : null;
+  const isOwner = currentUser?.id === postDetail?.data?.authorId;
 
   if (!postDetail) {
     notFound();
@@ -67,18 +75,15 @@ export default async function PostPage({ params }: PostPageProps) {
             <Clock className="h-3.5 w-3.5" />
             {postDetail?.data?.readingTimeMinutes} min read
           </span>
-          <Button variant="ghost" size="sm" className="ml-auto gap-2" asChild>
-            <Link href={`/posts/${postDetail?.data?.slug}/edit`}>
-              <Edit className="h-3.5 w-3.5" />
-              Edit
-            </Link>
-          </Button>
+          {isOwner && (
+            <Button variant="ghost" size="sm" className="ml-auto gap-2" asChild>
+              <Link href={`/posts/${postDetail?.data?.slug}/edit`}>
+                <Edit className="h-3.5 w-3.5" />
+                Edit
+              </Link>
+            </Button>
+          )}
         </div>
-
-        {/* Title */}
-        <h1 className="font-serif text-4xl font-bold tracking-tight sm:text-5xl">
-          {postDetail?.data?.title}
-        </h1>
 
         {/* Tags */}
         <div className="flex flex-wrap gap-2">
@@ -88,9 +93,31 @@ export default async function PostPage({ params }: PostPageProps) {
             </Badge>
           ))}
         </div>
+        {/* Title */}
+        <h1 className="font-serif text-4xl font-bold tracking-tight sm:text-5xl">
+          {postDetail?.data?.title}
+        </h1>
       </header>
+      <div className="flex gap-4 items-center mt-4">
+        <Avatar className="size-12 md:size-16">
+          <AvatarImage
+            src={postDetail?.data?.author?.avatarUrl}
+            alt={postDetail?.data?.author?.name}
+            className="object-cover"
+          />
+          <AvatarFallback className="text-xl">
+            {postDetail?.data?.author?.name.charAt(0)}
+          </AvatarFallback>
+        </Avatar>
+        <div className="flex flex-col">
+          <p className="font-semibold">{postDetail?.data?.author?.name}</p>
+          <p className="text-sm text-muted-foreground">
+            {postDetail?.data?.author?.jobTitle}
+          </p>
+        </div>
+      </div>
 
-      <Separator className="mb-8" />
+      <Separator className="my-8" />
 
       {/* Content */}
       {/* <PostContent content={postDetail?.data?.content || ""} /> */}
@@ -106,8 +133,9 @@ export default async function PostPage({ params }: PostPageProps) {
         <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:text-left">
           <Avatar className="h-16 w-16 border-2 border-border">
             <AvatarImage
-              src={author.avatar}
+              src={postDetail?.data?.author?.avatarUrl}
               alt={postDetail?.data?.author?.name}
+              className="object-cover"
             />
             <AvatarFallback className="text-xl">
               {postDetail?.data?.author?.name.charAt(0)}
@@ -119,7 +147,7 @@ export default async function PostPage({ params }: PostPageProps) {
               {postDetail?.data?.author?.name}
             </h3>
             <p className="max-w-md text-sm text-muted-foreground">
-              {author.bio}
+              {postDetail?.data?.author?.bio}
             </p>
           </div>
         </div>

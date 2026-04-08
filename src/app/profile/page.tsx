@@ -22,7 +22,6 @@ export default async function ProfilePage(props: {
       PostStatus.PUBLISHED) as PostStatus,
     ...(user?.id && { authorId: user.id }),
   });
-  console.log("posts", posts);
   return (
     <div className="min-h-screen bg-zinc-50 pb-20 pt-10 dark:bg-zinc-950">
       <Container className="max-w-6xl space-y-10">
