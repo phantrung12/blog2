@@ -68,6 +68,7 @@ apiClient.interceptors.response.use(
           window.location.href = "/login";
         } else {
           JSCookie.remove("accessToken");
+          JSCookie.remove("user");
         }
         return Promise.reject(refreshError);
       }
